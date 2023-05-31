@@ -29,12 +29,12 @@ in the paper. You can find them in `tree_of_thoughts.py`:
 | evaluate_states           | How to heuristically evaluate states           | This function evaluates the progress made towards solving the problem for each state in the problem-solving process. It serves as a heuristic for the search algorithm to determine which states to keep exploring and in which order. |
 | select_best_thoughts      | What search algorithm to use                   | This function determines the search algorithm to use in the problem-solving process. It could be a breadth-first search (BFS), depth-first search (DFS), or other advanced search algorithms. |
 
-## Get started
+## Setup
 
 1. Set your OpenAI API key as the environment variable `OPENAI_API_KEY`.
 2. run `pip install -r requirements.txt`
 
-### Running the experiments
+## Running the experiments
 
 The "cheaper run options" below use the `naive_run` strategy and GPT-3.5 to allow
 you to experiment with running the tests without incurring major costs.
@@ -43,7 +43,7 @@ The naive run uses Input-Output aka single (zero-shot) prompting.
 The default runs use breadth-first search and depth-first search tree-of-thought
 combined with GPT-4, so will significantly more costs.
 
-#### Game of 24
+### Game of 24
 
 Default:
 ```shell
@@ -55,7 +55,7 @@ Cheaper run option:
 ./scripts/game24/bfs.sh --backend gpt-3.5-turbo --naive_run --prompt_sample standard
 ```
 
-#### Creative writing
+### Creative writing
 
 Default:
 ```shell
@@ -67,7 +67,7 @@ Cheaper run option:
 ./scripts/creativewriting/bfs.sh --backend gpt-3.5-turbo --naive_run
 ```
 
-#### Crosswords
+### Crosswords
 
 Default:
 ```shell
@@ -86,10 +86,9 @@ via ``sh scripts/{game24, text, crosswords}/{standard_sampling, cot_sampling, bf
 , except in crosswords we use a DFS algorithm for ToT, which can be run
 via ``scripts/crosswords/search_crosswords-dfs.ipynb``.
 
-The very simple ``run.py`` implements the ToT + BFS algorithm, as well as the
-naive IO/CoT sampling. Some key arguments:
+The entrypoint is ``run.py``. Its key arguments:
 
-- ``--naive_run``: if True, run naive IO/CoT sampling instead of ToT + BFS.
+- ``--naive_run``: if `True`, run naive IO/CoT sampling instead of ToT + BFS.
 - ``--prompt_sample`` (choices=[``standard``, ``cot``]): sampling prompt
 - ``--method_generate`` (choices=[``sample``, ``propose``]): thought generator,
   whether to sample independent thoughts (used in Creative Writing) or propose
