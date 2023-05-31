@@ -7,12 +7,17 @@ import numpy as np
 from tasks.base import Task
 from tasks.game24 import Game24Task
 from tasks.creativewriting import CreativeWritingTask
-from utils import get_samples, get_proposals, get_votes, get_values
+from utils import get_samples, get_proposals, get_votes_from_states, get_state_values
 
 
 # 1. Decompose the intermediate process into thought steps
-def decompose_into_steps(args: argparse.Namespace, task: Game24Task | CreativeWritingTask, idx: int, gpt: Callable, to_print: bool = True) -> tuple:
-    x = task.get_input(idx)  # input
+def decompose_into_steps(
+        args: argparse.Namespace,
+        task: Game24Task | CreativeWritingTask,
+        task_instance: str,
+        gpt: Callable, to_print: bool = True
+) -> tuple:
+    x = task_instance  # input
     ys = ['']  # current output candidates
     infos = []
     for step in range(task.steps):
@@ -28,7 +33,14 @@ def decompose_into_steps(args: argparse.Namespace, task: Game24Task | CreativeWr
 
 
 # 2. Generate potential thoughts from each state
-def generate_potential_thoughts(args: argparse.Namespace, task: Task, x: str, ys: list, step: int, gpt: Callable) -> list:
+def generate_potential_thoughts(
+        args: argparse.Namespace,
+        task: Task,
+        x: str,
+        ys: list,
+        step: int,
+        gpt: Callable
+) -> list:
     new_ys = []
     if args.method_generate == 'sample':
         new_ys = [get_samples(task, x, y, gpt, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
@@ -39,17 +51,28 @@ def generate_potential_thoughts(args: argparse.Namespace, task: Task, x: str, ys
 
 
 # 3. Heuristically evaluate states
-def evaluate_states(args: argparse.Namespace, task: Game24Task | CreativeWritingTask, x: str, new_ys: list, gpt: Callable) -> list:
-    values = []
+def evaluate_states(
+        args: argparse.Namespace,
+        task: Game24Task | CreativeWritingTask,
+        x: str,
+        new_ys: list,
+        gpt: Callable
+) -> list:
+    state_values = []
     if args.method_evaluate == 'vote':
-        values = get_votes(task, x, new_ys, gpt, args.n_evaluate_sample)
+        state_values = get_votes_from_states(task, x, new_ys, gpt, args.n_evaluate_sample)
     elif args.method_evaluate == 'value':  # only applies to game24
-        values = get_values(task, x, new_ys, gpt, args.n_evaluate_sample)
-    return values
+        state_values = get_state_values(task, x, new_ys, gpt, args.n_evaluate_sample)
+    return state_values
 
 
 # 4. Decide which search algorithm to use
-def select_best_thoughts(args: argparse.Namespace, ids: list, values: list, new_ys: list) -> list:
+def select_best_thoughts(
+        args: argparse.Namespace,
+        ids: list,
+        values: list,
+        new_ys: list
+) -> list:
     select_ids = []
     if args.method_select == 'sample':
         ps = np.array(values) / sum(values)

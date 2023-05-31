@@ -1,6 +1,7 @@
 # Tree of Thoughts (ToT) Rewrite
 
-A rewrite for Tree of Thoughts to make it (subjectively) easier to read.
+A rewrite for Tree of Thoughts to make it (subjectively) easier to read and 
+navigate the code.
 
 This code is the implementation and results for the popular paper
 [Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601)
@@ -14,8 +15,8 @@ repository: [https://github.com/ysymyth/tree-of-thought-llm](https://github.com/
 
 In the experiment, Tree of Thoughts is applied to 3 `complex_tasks`:
 
-1. [Game of 24](data/24/README.md)
-2. [Creative writing](data/text/README.md)
+1. [Game of 24](data/game24/README.md)
+2. [Creative writing](data/creativewriting/README.md)
 3. [Mini crosswords](data/crosswords/README.md)
 
 I restructured the main functions of the code to reflect 4 questions posed
@@ -33,26 +34,47 @@ in the paper. You can find them in `tree_of_thoughts.py`:
 1. Set your OpenAI API key as the environment variable `OPENAI_API_KEY`.
 2. run `pip install -r requirements.txt`
 
-### Cheap run options
+### Running the experiments
 
-If you've read the paper and want to see how ToT is implemented, try running
-the `naive_run` strategies using GPT-3.5, which uses Input-Output aka
-single (zero-shot) prompting.
+The "cheaper run options" below use the `naive_run` strategy and GPT-3.5 to allow
+you to experiment with running the tests without incurring major costs.
+The naive run uses Input-Output aka single (zero-shot) prompting.
+
+The default runs use breadth-first search and depth-first search tree-of-thought
+combined with GPT-4, so will significantly more costs.
 
 #### Game of 24
 
+**Default**:
+```shell
+./scripts/game24/bfs.sh
+```
+
+**Cheaper run option**:
 ```shell
 ./scripts/game24/bfs.sh --backend gpt-3.5-turbo --naive_run --prompt_sample standard
 ```
 
 #### Creative writing
 
+**Default**:
+```shell
+./scripts/creativewriting/bfs.sh
+```
+
+**Cheaper run option**:
 ```shell
 ./scripts/creativewriting/bfs.sh --backend gpt-3.5-turbo --naive_run
 ```
 
 #### Crosswords
 
+**Default**:
+```shell
+./scripts/crosswords/standard_sampling.sh 
+```
+
+**Default**:
 ```shell
 ./scripts/crosswords/standard_sampling.sh --backend gpt-3.5-turbo --naive_run 
 ```

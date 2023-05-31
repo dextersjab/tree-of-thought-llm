@@ -12,8 +12,21 @@ from utils import generate_log_file_name
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 
-# The main function that reads arguments, selects the model and runs the tasks
+
 def run(args: argparse.Namespace) -> None:
+    """
+    This function is the main driver of the Tree of Thoughts (ToT) process. It retrieves the complex task to be decomposed,
+    generates the log file name, loops through the tasks and attempts to solve them, either by decomposing them into steps
+    using ToT or naively using Input-Output (IO) or Chain of Thoughts (CoT). It then tests the solutions, logs the results,
+    calculates the accuracy of the solutions, and logs the final results.
+
+    Parameters:
+    args (argparse.Namespace): The command-line arguments that configure the run.
+
+    Returns:
+    None
+    """
+
     # Retrieve the complex task to be decomposed
     task = get_complex_task(args.task_name, args.task_data_file)
     logs, average_accuracy, successful_solutions_count = [], 0, 0
@@ -25,11 +38,12 @@ def run(args: argparse.Namespace) -> None:
 
     # Loop through the tasks and attempt to solve them
     for task_index in range(args.task_start_index, args.task_end_index):
+        task_instance = task.get_input(task_index)
         # Solve the task either (1) decomposing it into steps using ToT or by (2) naively using IO or CoT
         if not args.naive_run:
-            solutions, task_info = decompose_into_steps(args, task, task_index, gpt)
+            solutions, task_info = decompose_into_steps(args, task, task_instance, gpt)
         else:
-            solutions, task_info = naive_solve(args, task, task_index, gpt)
+            solutions, task_info = naive_solve(args, task, task_instance, gpt)
 
         # Test the solutions and log the results
         test_results = [task.test_output(task_index, solution) for solution in solutions]
