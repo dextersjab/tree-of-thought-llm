@@ -74,7 +74,7 @@ combined with GPT-4, so will significantly more costs.
 ./scripts/crosswords/standard_sampling.sh 
 ```
 
-**Default**:
+**Cheaper run option**:
 ```shell
 ./scripts/crosswords/standard_sampling.sh --backend gpt-3.5-turbo --naive_run 
 ```
