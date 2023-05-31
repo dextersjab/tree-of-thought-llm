@@ -45,36 +45,36 @@ combined with GPT-4, so will significantly more costs.
 
 #### Game of 24
 
-**Default**:
+Default:
 ```shell
 ./scripts/game24/bfs.sh
 ```
 
-**Cheaper run option**:
+Cheaper run option:
 ```shell
 ./scripts/game24/bfs.sh --backend gpt-3.5-turbo --naive_run --prompt_sample standard
 ```
 
 #### Creative writing
 
-**Default**:
+Default:
 ```shell
 ./scripts/creativewriting/bfs.sh
 ```
 
-**Cheaper run option**:
+Cheaper run option:
 ```shell
 ./scripts/creativewriting/bfs.sh --backend gpt-3.5-turbo --naive_run
 ```
 
 #### Crosswords
 
-**Default**:
+Default:
 ```shell
 ./scripts/crosswords/standard_sampling.sh 
 ```
 
-**Cheaper run option**:
+Cheaper run option:
 ```shell
 ./scripts/crosswords/standard_sampling.sh --backend gpt-3.5-turbo --naive_run 
 ```
