@@ -24,12 +24,16 @@ class Game24Task(Task):
         6 * 4 = 24 (left: 24)
         (1 + 2 + 3) * 4 = 24
     """
-    def __init__(self, file='24.csv'):
+    def __init__(self, data_file='24.csv'):
         """
+        directory: the directory of the CSV
         file: a csv file (fixed)
         """
         super().__init__()
-        path = os.path.join(DATA_PATH, '24', file)
+        data_directory = 'game24'
+        path = os.path.join(DATA_PATH, data_directory, data_file)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"The specified file {path} does not exist.")
         self.data = list(pd.read_csv(path)['Puzzles'])
         self.value_cache = {}
         self.steps = 4

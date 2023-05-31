@@ -1,28 +1,40 @@
+from functools import partial
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import os
 import openai
-import backoff 
+import backoff
 
 completion_tokens = prompt_tokens = 0
 
-api_key = os.getenv("OPENAI_API_KEY", "")
-if api_key != "":
-    openai.api_key = api_key
-else:
+openai.api_key = os.getenv("OPENAI_API_KEY", "")
+if openai.api_key == "":
     print("Warning: OPENAI_API_KEY is not set")
-    
+
 api_base = os.getenv("OPENAI_API_BASE", "")
+
 if api_base != "":
     print("Warning: OPENAI_API_BASE is set to {}".format(api_base))
     openai.api_base = api_base
+
 
 @backoff.on_exception(backoff.expo, openai.error.OpenAIError)
 def completions_with_backoff(**kwargs):
     return openai.ChatCompletion.create(**kwargs)
 
+
+def get_gpt_func(model, temperature):
+    return partial(gpt, model=model, temperature=temperature)
+
+
 def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None) -> list:
     messages = [{"role": "user", "content": prompt}]
     return chatgpt(messages, model=model, temperature=temperature, max_tokens=max_tokens, n=n, stop=stop)
-    
+
+
 def chatgpt(messages, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None) -> list:
     global completion_tokens, prompt_tokens
     outputs = []
@@ -35,7 +47,8 @@ def chatgpt(messages, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop
         completion_tokens += res["usage"]["completion_tokens"]
         prompt_tokens += res["usage"]["prompt_tokens"]
     return outputs
-    
+
+
 def gpt_usage(backend="gpt-4"):
     global completion_tokens, prompt_tokens
     if backend == "gpt-4":

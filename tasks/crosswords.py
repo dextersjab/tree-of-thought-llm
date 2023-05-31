@@ -5,10 +5,11 @@ from tasks.base import Task, DATA_PATH
 from prompts.crosswords import * 
 from models import gpt
 
+
 class MiniCrosswordsEnv:
-    def __init__(self, file='mini0505.json'):
-        self.file = f'data/crosswords/{file}'
-        self.file = json.load(open(self.file))
+    def __init__(self, data_directory='./data/crosswords', data_file='mini0505.json'):
+        path = os.path.join(data_directory, data_file)
+        self.file = json.load(open(path))
         self.n = len(self.file)
         self.cache = {}
         self.idx = None
@@ -158,12 +159,15 @@ class MiniCrosswordsTask(Task):
     Input Example: 
     Output Example: 
     """
-    def __init__(self, file):
+    def __init__(self, data_file):
         """
+        directory: the directory of the CSV
         file: a csv file (fixed)
         """
         super().__init__()
-        self.env = MiniCrosswordsEnv(file)  # use it as a stateless tool
+        data_directory = 'crosswords'
+        data_directory_path = os.path.join(DATA_PATH, data_directory)
+        self.env = MiniCrosswordsEnv(f"{data_directory_path}", data_file)
         self.xs = []
         for idx in range(len(self.env)):
             self.env.reset(idx)

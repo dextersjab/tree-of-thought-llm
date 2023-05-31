@@ -1,24 +1,28 @@
 import os
 import re
 from tasks.base import Task, DATA_PATH
-from prompts.text import *
+from prompts.creativewriting import *
 from models import gpt
 
 
-class TextTask(Task):
+class CreativeWritingTask(Task):
     """
-    Input (x)   : a text instruction
-    Output (y)  : a text generation
+    Input (x)   : a creativewriting instruction
+    Output (y)  : a creativewriting generation
     Reward (r)  : # TODO
     Input Example: 
     Output Example: 
     """
-    def __init__(self, file='data_100_random_text.txt'):
+    def __init__(self, data_file='data_100_random_text.txt'):
         """
-        file: a text file, each line is some sentences
+        directory: the directory where the creativewriting file is located
+        file: a creativewriting file, each line is some sentences
         """
         super().__init__()
-        path = os.path.join(DATA_PATH, 'text', file)
+        data_directory = 'creativewriting'
+        path = os.path.join(DATA_PATH, data_directory, data_file)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"The specified file {path} does not exist.")
         self.data = open(path).readlines()
         self.steps = 2
         self.stops = ['\nPassage:\n', None]
